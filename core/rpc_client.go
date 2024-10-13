@@ -1,10 +1,12 @@
 package blockchain
 
 import (
+	"context"
 	"fmt"
+	"log"
 
-	walletconnect "github.com/civet148/walletconnect"
-	bitcoinrpc "github.com/wenweih/bitcoin-rpc-golang"
+	"github.com/blocto/solana-go-sdk/client"
+	"github.com/blocto/solana-go-sdk/rpc"
 )
 
 type RpcType int64
@@ -15,16 +17,13 @@ const (
 )
 
 func NewRpcClient(rpcType RpcType) {
-	btcClient, err := bitcoinrpc.New(&bitcoinrpc.ConnConfig{
-		Host:       "190.2.146.90:8333",
-		User:       "user",
-		Pass:       "pass",
-		DisableTLS: true,
-	})
-
-	walletConn, err := walletconnect.NewDApp("sdf")
+	c := client.NewClient(rpc.MainnetRPCEndpoint)
+	resp, err := c.GetVersion(context.TODO())
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalf("failed to version info, err: %v", err)
 	}
 
+	c.RpcClient.tok
+
+	fmt.Println("version", resp.SolanaCore)
 }

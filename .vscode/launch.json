@@ -9,18 +9,18 @@
             "program": "main.go"
         },
         {
-            "name": "webapp",
-            "type": "node-terminal",
-            "request": "launch",
-            "command": "ng serve --proxy-config proxy.conf.json",
-            "cwd": "${workspaceFolder}\\webapp"
-        },
-        {
             "name": "Chrome",
             "request": "launch",
             "type": "chrome",
-            "url": "http://localhost:4200",
+            "url": "http://localhost:5173",
             "webRoot": "${workspaceRoot}\\webapp"
+        },
+        {
+            "command": "npm run dev",
+            "name": "Webapp",
+            "request": "launch",
+            "type": "node-terminal",
+            "cwd": "${workspaceFolder}\\webapp"
         },
     ]
 }

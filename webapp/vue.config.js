@@ -1,0 +1,11 @@
+module.exports = {
+    dev: {
+        proxy: {
+            "/api/*": {
+                target: "http://localhost:3333",
+                secure: false,
+                changeOrigin: true,
+            }
+        }
+    }
+};
