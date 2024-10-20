@@ -23,7 +23,5 @@ func NewRpcClient(rpcType RpcType) {
 		log.Fatalf("failed to version info, err: %v", err)
 	}
 
-	c.RpcClient.tok
-
 	fmt.Println("version", resp.SolanaCore)
 }

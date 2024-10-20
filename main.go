@@ -24,7 +24,6 @@ func (ec *EhtClient) connect() {
 
 func main() {
 	BindServices()
-
 	var serverExit = make(chan int)
 	go web.StartServerListener(serverExit)
 

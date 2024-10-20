@@ -7,6 +7,15 @@ import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      //process: "./process/browser",
+      stream: "stream-browserify",
+      //zlib: "browserify-zlib",
+      util: 'util'
+    }
+  },
   server: {
       proxy: {
           "/api": {
@@ -28,9 +37,4 @@ export default defineConfig({
       },
     })
   ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  }
 })

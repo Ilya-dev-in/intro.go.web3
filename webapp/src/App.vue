@@ -5,45 +5,31 @@ import WalletConnect from './components/WalletConnect.vue'
 import TokenList from './components/TokenList.vue';
 
 const back = { apiName: ""};
-
-fetch("/api/root")
-.then(respone => respone.json())
-.then(data => (back.apiName = data.Name))
-
 function onWalletConnected(modal) {
-  const vueComponent = h(Hello, {
-      tabs: [{ name: 'test', label: 'tt11' }, { name: 'test322', label: 'tt22' }],
-      columns: [{ name: 'col1' }, {name: 'col2'}]
-  });
-
-  render(vueComponent, document.getElementById("main-grid"));
+  debugger;
+  render(TokenList, document.getElementById("main-grid"));
 }
 </script>
 
 <template>
-  <div>
+  <div class="container">
     <header>
-      <div class="logo">
-        <img alt="Vue logo" class="logo" src="/favicon.ico" width="30" height="30" />
-        <span v-bind:id="back.apiName">Welcome to Web3 {{ back.apiName }}</span>
-      </div>
-      <div id="wallet">
-        <WalletConnect @onWalletConnected="onWalletConnected($event)" />
-      </div>
-      
+        <div class="logo">
+          <img alt="Vue logo" class="logo" src="/favicon.ico" width="30" height="30" />
+          <span v-bind:id="back.apiName">Welcome to Web3 {{ back.apiName }}</span>
+        </div>
+        <div id="wallet">
+          <WalletConnect @onWalletConnected="onWalletConnected($event)" />
+        </div>
     </header>
-    <div ref="myElement" v-el:mainGrid id="main-grid"></div>
-    <Hello 
-      :tabs="[{ name: 'test', label: 'tt11' }, {name: 'test322', label: 'tt22'}]" 
-      :columns="[{ name: 'col1' }, {name: 'col2'}]" />
-    <TokenList />
+    <main>
+      <TokenList />
+    </main>
+    <footer>
+      <p>Here's some contact info</p>
+    </footer>
   </div>
-
-  <!--<main>
-    <TheWelcome />
-  </main>-->
-</template>
-
+ </template>
 <style scoped>
 header {
   line-height: 1.5;
@@ -70,8 +56,15 @@ header {
     /*height: 40px;*/
     padding: 10px 50px;
     z-index: 20;
+    background-color: var(--color-background);
     /*place-items: center;
     padding-right: calc(var(--section-gap) / 2);*/
+  }
+
+  main {
+    margin-top: 45px;
+    width: 70%;
+    margin-left: 15%;
   }
 
   .logo {

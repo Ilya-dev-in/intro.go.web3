@@ -36,16 +36,8 @@ modal.subscribeEvents(function () {
 </script>
 
 <template>
-  <w3m-button />
-  <w3m-network-button />
-  <w3m-connect-button />
-  <w3m-account-button />
-
-  <button @click="modal.open()">Open Connect Modal</button>
-  <button @click="modal.open({ view: 'Networks' })">Open Network Modal</button>
-  <button @click="setThemeMode(themeMode === 'dark' ? 'light' : 'dark')">Toggle Theme Mode</button>
-  <button @click="this.$emit('onWalletConnected',modal)">Toggle Theme Mode</button>
-  <pre>{{ JSON.stringify(state, null, 2) }}</pre>
-  <pre>{{ JSON.stringify({ themeMode, themeVariables }, null, 2) }}</pre>
-  <!-- <pre>{{ JSON.stringify(events, null, 2) }}</pre> -->
+  <div>
+    <w3m-button />
+    <!-- <w3m-network-button /> -->
+  </div>
 </template>
