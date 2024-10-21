@@ -20,11 +20,7 @@ const headers = [
   {
     title: 'USD Amount',
     key: 'UsdAmount',
-  },
-  {
-    title: '',
-    key: 'actions',
-  },
+  }
 ]
 
 const itemsPerPage = ref(5)
@@ -36,11 +32,16 @@ const umi = getCurrentInstance().appContext.provides.umi;
 async function loadItems() {
   loading.value = true;      
   const response = await axios.post("api/getTokens", arguments?.length > 0 ? arguments[0] : null);
-  const data = await response.data
+  const data = await response.data?.result ?? [];
+
+  const transactionsResponse = await axios.post("api/getTokensTransactions", arguments?.length > 0 ? arguments[0] : null);
+  const transactionsData = await transactionsResponse.data?.result ?? [];
+  console.log(transactionsData);
+
   for (let i in data) {
     const tokenInfo = await TokenDescriptionList.getTokenInfoByMintAsync(umi, data[i].Mint, "5C5oKvXWWA9T2GtG5rHsp4xQoF4G93TqwbWJ91Po3Ric");
     data[i].Symbol = tokenInfo?.symbol;
-    data[i].UIAmount = data[i].Amount / (tokenInfo.decimals === 0 ? 1 : Math.pow(10, tokenInfo.decimals));
+    data[i].UIAmount = (data[i].Amount / (tokenInfo.decimals === 0 ? 1 : Math.pow(10, tokenInfo.decimals))).toPrecision(12);
     data[i].UsdAmount = 0;
 
   }
