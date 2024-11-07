@@ -19,11 +19,15 @@ type BaseHttpResponse struct {
 	Error   error `json:"error"`
 }
 
-type BaseHttpHandler[T any] struct {
-	HandleFn func(http.ResponseWriter, *http.Request, *T) (any, error)
+type Semaphore struct {
+	semaCh chan struct{}
 }
 
-func (handler BaseHttpHandler[T]) HandleResponseErr(w http.ResponseWriter, err error) bool {
+type BaseHttpHandler[T any] func(http.ResponseWriter, *http.Request, *T) (any, error) /* {
+	//HandleFn func(http.ResponseWriter, *http.Request, *T) (any, error)
+}*/
+
+func HandleResponseErr(w http.ResponseWriter, err error) bool {
 	if err != nil {
 		response := BaseHttpResponse{
 			Success: err == nil,
@@ -39,15 +43,15 @@ func (handler BaseHttpHandler[T]) HandleResponseErr(w http.ResponseWriter, err e
 	return false
 }
 
-func (handler BaseHttpHandler[T]) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (handleFn BaseHttpHandler[T]) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	body, _ := io.ReadAll(r.Body)
 	var requestBody T
 	bodyErr := json.Unmarshal(body, &requestBody)
-	if handler.HandleResponseErr(w, bodyErr) {
+	if HandleResponseErr(w, bodyErr) {
 		return
 	}
 
-	result, err := handler.HandleFn(w, r, &requestBody)
+	result, err := handleFn(w, r, &requestBody)
 	response := BaseHttpResponse{
 		Success: err == nil,
 		Result:  result,
@@ -56,4 +60,8 @@ func (handler BaseHttpHandler[T]) ServeHTTP(w http.ResponseWriter, r *http.Reque
 
 	jsonStr, _ := json.Marshal(response)
 	w.Write(jsonStr)
+}
+
+type JsonStringValue struct {
+	Value string `json:"value"`
 }
