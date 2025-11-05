@@ -2,7 +2,7 @@
 import { createAppKit } from '@reown/appkit'
 import { SolanaAdapter } from '@reown/appkit-adapter-solana'
 
-import { solana, solanaTestnet, solanaDevnet } from '@reown/appkit/networks'
+import { solana } from '@reown/appkit/networks'
 import { mainnet, arbitrum, sepolia } from '@reown/appkit/networks'
 
 import { SolflareWalletAdapter, PhantomWalletAdapter } from '@solana/wallet-adapter-wallets'
@@ -10,18 +10,18 @@ import { SolflareWalletAdapter, PhantomWalletAdapter } from '@solana/wallet-adap
 const solanaWeb3JsAdapter = new SolanaAdapter({
   wallets: [new PhantomWalletAdapter(), new SolflareWalletAdapter()]
 })
-const projectId = '0eb6b5fca832a86275177e9fa462eaca'
+const projectId = 'YOUR_PROJECT_ID';
 
 const metadata = {
   name: 'AppKit',
   description: 'AppKit Example',
-  url: 'http://localhost:5173/', // origin must match your domain & subdomain
+  url: 'http://localhost:5173/',
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
 
 const modal = createAppKit({
   adapters: [solanaWeb3JsAdapter],
-  networks: [mainnet, arbitrum, sepolia, solana, solanaTestnet, solanaDevnet],
+  networks: [mainnet, arbitrum, sepolia, solana],
   metadata,
   projectId,
   features: {
@@ -29,9 +29,14 @@ const modal = createAppKit({
   }
 });
 
+const emit = defineEmits(['onWalletConnected'])
 modal.subscribeEvents(function () {
-  //this.$emit("onWalletConnected", modal);
+   console.log(modal.getEvent().data.event)
 })
+modal.subscribeState(function () {
+  emit("onWalletConnected", modal.getAddress());
+})
+
 
 </script>
 

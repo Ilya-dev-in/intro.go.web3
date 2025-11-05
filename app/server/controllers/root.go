@@ -3,17 +3,19 @@ package web
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
 
+	blockchain "web3httpserver/app/core"
 	httpHandler "web3httpserver/app/server/utils"
 
 	"github.com/blocto/solana-go-sdk/client"
 	w3client "github.com/blocto/solana-go-sdk/client"
 	rpc "github.com/blocto/solana-go-sdk/rpc"
+	log "github.com/rs/zerolog/log"
 )
 
 func GetRoot(w http.ResponseWriter, r *http.Request, _ *any) (any, error) {
@@ -24,7 +26,7 @@ func GetAccountBalance(w http.ResponseWriter, r *http.Request) {
 	c := client.NewClient(rpc.MainnetRPCEndpoint)
 	balance, balanceErr := c.GetBalance(context.TODO(), "5C5oKvXWWA9T2GtG5rHsp4xQoF4G93TqwbWJ91Po3Ric")
 	if balanceErr != nil {
-		log.Fatalf("failed to version info, err: %v", balanceErr)
+		log.Error().Err(balanceErr)
 	}
 
 	n := strconv.FormatUint(balance, 10)
@@ -43,7 +45,7 @@ func GetTokens(w http.ResponseWriter, r *http.Request, t *httpHandler.BaseHttpRe
 		"5C5oKvXWWA9T2GtG5rHsp4xQoF4G93TqwbWJ91Po3Ric",
 		"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
 	if err != nil {
-		log.Fatalf("failed to version info, err: %v", err)
+		log.Error().Err(err)
 		return nil, err
 	}
 
@@ -60,7 +62,7 @@ func GetAccountSignatures(w http.ResponseWriter, r *http.Request, before *httpHa
 			Before: before.Value,
 		})
 	if err != nil {
-		log.Fatalf("failed to account signatures, err: %v", err)
+		log.Error().Err(err)
 		return nil, err
 	}
 
@@ -76,7 +78,7 @@ func GetTokenTransactions(w http.ResponseWriter, r *http.Request, _ *any) (any, 
 			Limit: 5,
 		})
 	if err != nil {
-		log.Fatalf("failed to account signatures, err: %v", err)
+		log.Error().Err(err)
 		return nil, err
 	}
 
@@ -126,7 +128,7 @@ func GetSignatureTransaction(w http.ResponseWriter, r *http.Request, signature *
 	time.Sleep(time.Second * 2)
 	transaction, err := c.GetTransaction(context.TODO(), signature.Value)
 	if err != nil {
-		log.Fatalf("failed to get transaction info, err: %v", err)
+		log.Error().Err(err)
 		return nil, err
 	}
 
@@ -165,31 +167,25 @@ func call[T any](rc *rpc.RpcClient, ctx context.Context, params ...any) (T, erro
 	return output, nil
 }
 
-/*func GetTransactions(doneCh chan struct{}, address string) chan rpc.GetSignaturesForAddress {
-	c := client.NewClient(rpc.MainnetRPCEndpoint)
-	outputCh := make(chan rpc.GetSignaturesForAddress)
-	signatures, err := c.GetSignaturesForAddressWithConfig(
-		context.TODO(),
-		"5C5oKvXWWA9T2GtG5rHsp4xQoF4G93TqwbWJ91Po3Ric",
-		client.GetSignaturesForAddressConfig{
-			Limit: 100,
-		})
-	if err != nil {
-		<-doneCh
-		return nil
+func GetAssetByAddress(w http.ResponseWriter, r *http.Request, mint *httpHandler.JsonStringValue) (any, error) {
+	client := blockchain.ResolveRpcClient("Solana")
+	asset, assetErr := client.GetAsset(mint.Value, r.Context())
+	if assetErr != nil {
+		log.Error().Err(assetErr)
+		return nil, assetErr
 	}
 
-	go func() {
-		defer close(outputCh)
+	return asset, nil
+}
 
-		for _, signature := range signatures {
-			select {
-			case <-doneCh:
-				return
-			case outputCh <- signature:
-			}
-		}
-	}()
+func GetAssetBatch(w http.ResponseWriter, r *http.Request, mint *httpHandler.JsonStringsValues) (any, error) {
+	client := blockchain.ResolveRpcClient("Solana")
+	asset, assetErr := client.GetAssetBatch(r.Context(), mint.Values...)
+	if assetErr != nil {
+		log.Error().Err(assetErr)
+		return nil, assetErr
+	}
 
-	return outputCh
-}*/
+	log.Debug().Msg("trt ")
+	return asset, errors.New("tert sdg df")
+}

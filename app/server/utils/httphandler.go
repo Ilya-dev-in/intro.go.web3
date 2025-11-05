@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+
+	"github.com/rs/zerolog/log"
 )
 
 type BaseHttpRequestPagination struct {
@@ -14,9 +16,9 @@ type BaseHttpRequestPagination struct {
 }
 
 type BaseHttpResponse struct {
-	Result  any   `json:"result"`
-	Success bool  `json:"success"`
-	Error   error `json:"error"`
+	Result  any    `json:"result"`
+	Success bool   `json:"success"`
+	Error   string `json:"error"`
 }
 
 type Semaphore struct {
@@ -32,10 +34,12 @@ func HandleResponseErr(w http.ResponseWriter, err error) bool {
 		response := BaseHttpResponse{
 			Success: err == nil,
 			Result:  nil,
-			Error:   err,
+			Error:   err.Error(),
 		}
 		jsonStr, _ := json.Marshal(response)
 		w.Write(jsonStr)
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Error().Err(err)
 
 		return true
 	}
@@ -44,6 +48,8 @@ func HandleResponseErr(w http.ResponseWriter, err error) bool {
 }
 
 func (handleFn BaseHttpHandler[T]) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	body, _ := io.ReadAll(r.Body)
 	var requestBody T
 	bodyErr := json.Unmarshal(body, &requestBody)
@@ -55,7 +61,11 @@ func (handleFn BaseHttpHandler[T]) ServeHTTP(w http.ResponseWriter, r *http.Requ
 	response := BaseHttpResponse{
 		Success: err == nil,
 		Result:  result,
-		Error:   err,
+	}
+	if err != nil {
+		response.Error = err.Error()
+		log.Error().Err(err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 
 	jsonStr, _ := json.Marshal(response)
@@ -64,4 +74,8 @@ func (handleFn BaseHttpHandler[T]) ServeHTTP(w http.ResponseWriter, r *http.Requ
 
 type JsonStringValue struct {
 	Value string `json:"value"`
+}
+
+type JsonStringsValues struct {
+	Values []string `json:"values"`
 }

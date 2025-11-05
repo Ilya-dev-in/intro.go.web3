@@ -1,0 +1,20 @@
+ .overview-box {
+     border-radius: 15px;
+     height: 120px;
+     box-shadow: 3px 3px 10px 0px #214d2930;
+     background-color: #282828;
+    max-width: 30%;
+ }
+
+ :root {
+    color: #ffffffa6;
+ }
+
+ .v-data-table__tr--clickable:hover {
+    background-color: #2828286b;
+    border-radius: 10px;
+ }
+
+ table td, table th {
+    vertical-align: middle;
+ }

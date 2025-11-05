@@ -6,10 +6,13 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import 'material-design-icons-iconfont/dist/material-design-icons.css'
-import '@mdi/font/css/materialdesignicons.css'
 
 import axios from 'axios'
+import Buefy from 'buefy'
+
+import 'buefy/dist/buefy.css';
+import 'material-design-icons-iconfont/dist/material-design-icons.css';
+import '@mdi/font/css/materialdesignicons.css';
 
 const app = createApp(App)
 app.config.globalProperties.$axios = axios
@@ -20,7 +23,6 @@ axios.interceptors.request.use((config) => {
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata'
 
-// Use the RPC endpoint of your choice.
 const umi = createUmi('https://mainnet.helius-rpc.com/?api-key=193c93fe-5752-487d-9749-8130b7b13c47',
         { "apiKey": "193c93fe-5752-487d-9749-8130b7b13c47" })
     .use(mplTokenMetadata())
@@ -47,4 +49,5 @@ app.provide("umi", umi);
 app.use(vuetify)
     .use(mplTokenMetadata)
     .use(umi)
+    .use(Buefy)
     .mount("#app");

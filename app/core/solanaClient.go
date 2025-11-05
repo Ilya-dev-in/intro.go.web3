@@ -3,12 +3,10 @@ package blockchain
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	solClient "github.com/blocto/solana-go-sdk/client"
 	"github.com/blocto/solana-go-sdk/rpc"
-	"github.com/rs/zerolog/log"
 
 	app "web3httpserver/app"
 	dto "web3httpserver/app/core/dto"
@@ -40,10 +38,12 @@ func (sc SolanaClient) GetAsset(address string, ctx context.Context) (*dto.RpcRe
 }
 
 func (sc SolanaClient) GetAssetBatch(ctx context.Context, addresses ...string) (any, error) {
-	msg := "Solana GetAssetBatch not implemented"
-	log.Error().Msg(msg)
+	assets, err := call[dto.RpcResult[[]dto.Asset]](&sc.Instance.RpcClient, ctx, "getAssetBatch", addresses)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New(msg)
+	return assets, nil
 }
 
 func call[T any](rc *rpc.RpcClient, ctx context.Context, params ...any) (T, error) {

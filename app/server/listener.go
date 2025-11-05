@@ -28,6 +28,8 @@ func StartServerListener(exit chan int) {
 	})
 
 	mux.Handle("/api/GetAssetByMint", httpHandler.BaseHttpHandler[httpHandler.JsonStringValue](controllers.GetAssetByMint))
+	mux.Handle("/api/GetAssetByAddress", httpHandler.BaseHttpHandler[httpHandler.JsonStringValue](controllers.GetAssetByAddress))
+	mux.Handle("/api/GetAssetBatch", httpHandler.BaseHttpHandler[httpHandler.JsonStringsValues](controllers.GetAssetBatch))
 
 	err := http.ListenAndServe(fmt.Sprintf(":%s", app.ResolveAppConfig().App.Port), mux)
 

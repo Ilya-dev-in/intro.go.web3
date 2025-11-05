@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
-	"web3httpserver/app"
 	web "web3httpserver/app/server"
 	"web3httpserver/app/services"
 
@@ -16,21 +15,19 @@ import (
 
 func main() {
 	services.BindServices()
-	addLog()
+	defer addLog().Close()
 	var serverExit = make(chan int)
 	go web.StartServerListener(serverExit)
 
 	<-serverExit
 }
 
-func addLog() {
-	cfg := app.ResolveAppConfig()
+func addLog() *os.File {
+	/*cfg := app.ResolveAppConfig()
 	lvl, lvlErr := zerolog.ParseLevel(cfg.Logger.LogLevel)
-	if lvlErr != nil {
-		fmt.Println("Log level is not defined - set by default debug")
-		lvl = zerolog.DebugLevel
-	}
-	zerolog.SetGlobalLevel(lvl)
+	if lvlErr == nil {
+		zerolog.SetGlobalLevel(lvl)
+	}*/
 
 	zerolog.CallerMarshalFunc = func(pc uintptr, file string, line int) string {
 		fmt.Println()
@@ -41,8 +38,9 @@ func addLog() {
 	if err != nil {
 		panic(err)
 	}
-	defer file.Close()
 
 	logger := zerolog.New(file).With().Timestamp().Logger()
 	log.Logger = logger
+
+	return file
 }

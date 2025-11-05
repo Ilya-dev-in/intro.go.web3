@@ -1,2 +1,10 @@
+#webapp
 /webapp/node_modules
 /webpapp/.angular
+
+# Logs
+logs
+*.log
+
+#builds
+*.exe

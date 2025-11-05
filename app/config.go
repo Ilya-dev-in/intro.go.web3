@@ -37,6 +37,16 @@ type Logger struct {
 	LogLevel string `yaml:"LOG_LEVEL", env:"LOG_LEVEL"`
 }
 
+/*func (l *Logger) Levels() zerolog.Level {
+	b := make([]zerolog.Level, (len(l.LogLevels)+7)/8)
+	for i, lvl := range l.LogLevels {
+		lv, err := zerolog.ParseLevel(lvl)
+		b[i] |= lv
+	}
+
+	return b
+}*/
+
 func InitEnv() AppConfig {
 	ctx := context.Background()
 	var cfg AppConfig
